@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="15分トレーニング">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>15分トレーニング</title>
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17181b;background:#f5f5f7}
+    *{box-sizing:border-box}body{margin:0;background:#f5f5f7}main{max-width:520px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom))}
+    h1{font-size:28px;margin:0 0 4px}.muted{color:#6b6d73}.card{background:#fff;border:1px solid #e4e4e7;border-radius:20px;padding:18px;margin:12px 0}
+    .days{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.day{padding:12px 6px;text-align:center;border-radius:14px;background:#fff;border:1px solid #e4e4e7;font-weight:700}.day.active{background:#111827;color:#fff}.day span{font-size:11px;font-weight:500}
+    .label{text-align:center;color:#6b6d73;font-size:14px}.exercise{text-align:center;font-size:27px;font-weight:800;margin:8px 0}.timer{text-align:center;font-size:64px;font-weight:800;letter-spacing:-3px}.bar{height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#111827}
+    button{border:0;border-radius:14px;min-height:48px;padding:0 16px;font-size:16px;font-weight:700;background:#111827;color:#fff}.secondary{background:#e5e7eb;color:#17181b}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}.note{text-align:center;font-size:14px;color:#6b6d73;margin-top:8px}.stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}.stat:last-child{border-bottom:0}
+    .video{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid #eee}.video:last-child{border-bottom:0}.video-title{font-weight:700;font-size:15px;line-height:1.35}.video-meta{font-size:12px;color:#6b6d73;margin-top:3px}.yt{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;text-decoration:none;background:#111827;color:#fff;border-radius:12px;padding:11px 13px;font-weight:700;font-size:13px}
+    .small{font-size:13px}.install{background:#eef0f3}.hidden{display:none}
+  </style>
+</head>
+<body><main>
+  <header><div class="muted">自宅・器具なし</div><h1>15分トレーニング</h1><div class="muted" id="date"></div></header>
+  <section class="days"><div class="day" id="d1">月<br><span>全身＋脚</span></div><div class="day" id="d3">水<br><span>上半身＋体幹</span></div><div class="day" id="d6">土<br><span>全身＋持ち上げ</span></div></section>
+  <section class="card"><div class="label" id="session"></div><div class="exercise" id="exercise">準備OK</div><div class="timer" id="timer">15:00</div><div class="note" id="note">「開始」でスタート</div><div class="bar"><i id="bar"></i></div></section>
+  <div class="buttons"><button id="start">開始</button><button class="secondary" id="pause">停止</button><button class="secondary" id="reset">リセット</button></div>
+
+  <section class="card"><strong>おすすめ動画</strong>
+    <div class="video"><div><div class="video-title">10分で手応えがある全身の自重筋トレ</div><div class="video-meta">uFit｜器具なし・初心者向け</div></div><a class="yt" href="https://www.youtube.com/watch?v=6uQq4U2mDSQ" target="_blank" rel="noopener">YouTube ▶</a></div>
+    <div class="video"><div><div class="video-title">全身自重キントレ 10分</div><div class="video-meta">uFit｜自宅・器具なし</div></div><a class="yt" href="https://www.youtube.com/watch?v=nUVR-Wk9M3c" target="_blank" rel="noopener">YouTube ▶</a></div>
+    <p class="small muted" style="margin-bottom:0">動画を見ながら行いたい日は、こちらからYouTubeを開けます。</p>
+  </section>
+
+  <section class="card"><div class="stat"><span>今週の完了</span><strong id="weekly">0 / 3</strong></div><div class="stat"><span>今日の状態</span><strong id="status">未完了</strong></div></section>
+  <section class="card install hidden" id="installBox"><strong>iPhoneでアプリのように使う</strong><p class="small">Safariの共有ボタン →「ホーム画面に追加」で、このページをホーム画面に置けます。</p></section>
+  
+<section class="card" id="weeklyMenu">
+  <h2 style="margin:0 0 12px;font-size:20px;">週間メニュー</h2>
+
+  <div style="margin-bottom:16px;">
+    <strong>月曜日：全身＋脚・お尻</strong>
+    <div class="muted small" style="margin-top:6px;">
+      スクワット → リバースランジ → ヒップリフト → ブルガリアンスクワット → プランク
+    </div>
+  </div>
+
+  <div style="margin-bottom:16px;">
+    <strong>水曜日：上半身＋体幹</strong>
+    <div class="muted small" style="margin-top:6px;">
+      腕立て伏せ → パイクプッシュアップ → スーパーマン → バードドッグ → プランク
+    </div>
+  </div>
+
+  <div style="margin-bottom:16px;">
+    <strong>土曜日：全身＋持ち上げる力</strong>
+    <div class="muted small" style="margin-top:6px;">
+      スクワット → リバースランジ → 腕立て伏せ → ヒップリフト → プランク
+    </div>
+  </div>
+
+  <div style="display:grid;gap:8px;">
+    <a href="https://www.youtube.com/watch?v=6uQq4U2mDSQ" target="_blank" rel="noopener"
+       style="display:block;text-decoration:none;text-align:center;padding:13px;border-radius:14px;background:#111827;color:white;font-weight:700;">
+      ▶ おすすめYouTube①
+    </a>
+    <a href="https://www.youtube.com/watch?v=nUVR-Wk9M3c" target="_blank" rel="noopener"
+       style="display:block;text-decoration:none;text-align:center;padding:13px;border-radius:14px;background:#e5e7eb;color:#17181b;font-weight:700;">
+      ▶ おすすめYouTube②
+    </a>
+  </div>
+  <p class="small muted" style="margin:10px 0 0;text-align:center;">
+    動画を見ながら行う場合も、無理のない範囲で行ってください。
+  </p>
+</section>
+
+<section class="card small"><strong>安全について</strong><p class="muted">痛みが出たら中止してください。人を実際に持ち上げる練習は、一人では行わないでください。</p></section>
+</main>
+<script>
+const plans={
+  1:{name:"月曜日：全身＋脚・お尻",items:[
+    ["スクワット",40],["休憩",20],["リバースランジ",40],["休憩",20],["ヒップリフト",40],["休憩",20],
+    ["ブルガリアンスクワット",40],["休憩",20],["プランク",40],["休憩",20],
+    ["スクワット",40],["休憩",20],["リバースランジ",40],["休憩",20],["ヒップリフト",40],["休憩",20],
+    ["ブルガリアンスクワット",40],["休憩",20],["プランク",40],["休憩",20],
+    ["スクワット",40],["休憩",20],["リバースランジ",40],["休憩",20],["ヒップリフト",40],["休憩",20],
+    ["ブルガリアンスクワット",40],["休憩",20],["プランク",40],["休憩",20]
+  ]},
+  3:{name:"水曜日：上半身＋体幹",items:[
+    ["腕立て伏せ",40],["休憩",20],["パイクプッシュアップ",40],["休憩",20],["スーパーマン",40],["休憩",20],
+    ["バードドッグ",40],["休憩",20],["プランク",40],["休憩",20],
+    ["腕立て伏せ",40],["休憩",20],["パイクプッシュアップ",40],["休憩",20],["スーパーマン",40],["休憩",20],
+    ["バードドッグ",40],["休憩",20],["プランク",40],["休憩",20],
+    ["腕立て伏せ",40],["休憩",20],["パイクプッシュアップ",40],["休憩",20],["スーパーマン",40],["休憩",20],
+    ["バードドッグ",40],["休憩",20],["プランク",40],["休憩",20]
+  ]},
+  6:{name:"土曜日：全身＋持ち上げる力",items:[
+    ["スクワット",40],["休憩",20],["リバースランジ",40],["休憩",20],["腕立て伏せ",40],["休憩",20],
+    ["ヒップリフト",40],["休憩",20],["プランク",40],["休憩",20],
+    ["スクワット",40],["休憩",20],["リバースランジ",40],["休憩",20],["腕立て伏せ",40],["休憩",20],
+    ["ヒップリフト",40],["休憩",20],["プランク",40],["休憩",20],
+    ["スクワット",40],["休憩",20],["リバースランジ",40],["休憩",20],["腕立て伏せ",40],["休憩",20],
+    ["ヒップリフト",40],["休憩",20],["プランク",40],["休憩",20]
+  ]}
+};
+const now=new Date(),day=now.getDay(),plan=plans[day]||plans[1];
+const total=900;let left=plan.items[0][1],idx=0,running=false,timerId=null,elapsed=0;
+const $=id=>document.getElementById(id);
+$("date").textContent=`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`;
+$("session").textContent=plan.name;
+if(day===1)$("d1").classList.add("active");if(day===3)$("d3").classList.add("active");if(day===6)$("d6").classList.add("active");
+function weekKey(){const d=new Date(),first=new Date(d.getFullYear(),0,1);return `${d.getFullYear()}-${Math.ceil((((d-first)/86400000)+first.getDay()+1)/7)}`}
+function loadCount(){return Number(localStorage.getItem("training-"+weekKey())||0)}
+function render(){
+  const item=plan.items[idx];
+  $("exercise").textContent=item?item[0]:"完了！";
+  $("timer").textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;
+  $("note").textContent=item?.[0]==="休憩"?"休憩してください":(item?"無理のないフォームで":"お疲れさまでした！");
+  $("bar").style.width=`${Math.max(0,Math.min(100,elapsed/total*100))}%`;
+  $("weekly").textContent=`${loadCount()} / 3`;
+  $("status").textContent=localStorage.getItem("done-"+new Date().toDateString())==="1"?"完了":"未完了";
+}
+function finish(){
+  running=false;clearInterval(timerId);timerId=null;
+  localStorage.setItem("done-"+new Date().toDateString(),"1");
+  if(localStorage.getItem("counted-"+new Date().toDateString())!=="1"){
+    localStorage.setItem("training-"+weekKey(),String(Math.min(3,loadCount()+1)));
+    localStorage.setItem("counted-"+new Date().toDateString(),"1");
+  }
+  idx=plan.items.length;left=0;elapsed=total;render();
+}
+function tick(){
+  if(!running)return;
+  left--;elapsed++;
+  if(left<=0){
+    idx++;
+    if(idx>=plan.items.length){finish();return}
+    left=plan.items[idx][1];
+  }
+  render();
+}
+$("start").onclick=()=>{if(running||idx>=plan.items.length)return;running=true;timerId=setInterval(tick,1000);render()};
+$("pause").onclick=()=>{running=false;clearInterval(timerId);timerId=null};
+$("reset").onclick=()=>{running=false;clearInterval(timerId);timerId=null;idx=0;left=plan.items[0][1];elapsed=0;render()};
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});render();
+</script></body></html>
